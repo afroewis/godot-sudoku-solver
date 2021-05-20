@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="Sudoku"
-run/main_scene="res://app_scene.tscn"
+run/main_scene="res://main_scene.tscn"
 config/icon="res://icon.png"
 
 [display]
