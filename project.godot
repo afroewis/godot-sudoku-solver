@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Reference",
+"class": "Bitset",
+"language": "GDScript",
+"path": "res://bitset.gd"
+} ]
+_global_script_class_icons={
+"Bitset": ""
+}
+
 [application]
 
 config/name="Sudoku"
