@@ -21,6 +21,7 @@ var board = [
 var rows: Array = []
 var cols: Array = []
 var cells: Array = []
+var steps: Array = []
 
 func are_all_true(arr: Array) -> bool:
 	for i in arr.size():
@@ -33,9 +34,18 @@ func _ready():
 	create_board()
 
 func solve_pressed():
-	var number = container.get_children()[0]
-	var label: Label = number.get_node("Label")
-	label.text = String("Hi")
+	print_board()
+	solve(board, 0, rows, cols, cells)
+	print_board()
+	
+	for i in steps:
+		var index = i[0]
+		var value = i[1]
+		var number = container.get_children()[index]
+		var label: Label = number.get_node("Label")
+		var text = String(" ") if value == 0 else String(value)
+		label.text = text
+		yield(get_tree().create_timer(0.5), "timeout")
 	
 func create_board():	
 	for x in board:
@@ -63,10 +73,6 @@ func create_board():
 			rows[row][v - 1] = true
 			cols[column][v - 1] = true
 			cells[cell][v - 1] = true
-			
-	print_board()
-	solve(board, 0, rows, cols, cells)
-	print_board()
 				
 				
 func solve(board: Array, currentIndex: int, rowValues: Array, columnValues: Array, cellValues: Array) -> bool:
@@ -98,6 +104,7 @@ func solve(board: Array, currentIndex: int, rowValues: Array, columnValues: Arra
 		
 		if !isUsed:
 			board[currentIndex] = i + 1;
+			add_step(currentIndex, i + 1)
 			rowValues[row][i] = true
 			columnValues[column][i] = true
 			cellValues[cell][i] = true
@@ -112,10 +119,11 @@ func solve(board: Array, currentIndex: int, rowValues: Array, columnValues: Arra
 	
 	# No number between 1-9 can be used. This path does not work.
 	board[currentIndex] = 0;
+	add_step(currentIndex, 0)
 	return false
 
-func update_number(index: int, newValue: int) -> void:
-	print("hi")
+func add_step(index: int, newValue: int) -> void:
+	steps.append([index, newValue])
 
 func get_row(index: int) -> int:
 	return index / 9;
@@ -136,5 +144,3 @@ func print_board():
 		strr += String(board[i]) + " "
 		
 	print(strr)
-
-
