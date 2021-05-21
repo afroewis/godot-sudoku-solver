@@ -45,7 +45,7 @@ func solve_pressed():
 		var label: Label = number.get_node("Label")
 		var text = String(" ") if value == 0 else String(value)
 		label.text = text
-		yield(get_tree().create_timer(0.5), "timeout")
+		yield(get_tree().create_timer(0.001), "timeout")
 	
 func create_board():	
 	for x in board:
@@ -54,6 +54,7 @@ func create_board():
 		
 		if x != 0:
 			label.text = String(x)
+			instance.color = Color.darkslateblue
 		
 		container.add_child(instance)
 			
