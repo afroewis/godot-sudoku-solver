@@ -27,12 +27,7 @@ var cols: Array = []
 var cells: Array = []
 var steps: Array = []
 var isPaused: bool
-
-func are_all_true(arr: Array) -> bool:
-	for i in arr.size():
-		if arr[i] == false:
-			return false
-	return true
+var current_step: int = 0
 
 func _ready():
 	play_button.connect("button_up", self, "solve_pressed")
@@ -40,6 +35,10 @@ func _ready():
 	reset_button.connect("button_up", self, "reset_pressed")
 	
 	create_board()
+	
+	print_board()
+	solve(board, 0, rows, cols, cells)
+	print_board()
 
 func pause_pressed():
 	play_button.disabled = false
@@ -56,9 +55,10 @@ func reset_pressed():
 	rows = []
 	cols = []
 	cells = []
-	isPaused = false		
+	isPaused = false	
+	current_step = 0	
 	create_board()
-	
+	solve(board, 0, rows, cols, cells)
 	
 func solve_pressed():
 	isPaused = false
@@ -66,22 +66,17 @@ func solve_pressed():
 	pause_button.disabled = false
 	reset_button.disabled = false
 	
-	print_board()
-	solve(board, 0, rows, cols, cells)
-	print_board()
-	
-	for step in steps:
-		if (isPaused):
-			break
-		var index = step[0]
-		var value = step[1]
+	while !isPaused:
+		var index = steps[current_step][0]
+		var value = steps[current_step][1]
 		var number = container.get_children()[index]
 		var label: Label = number.get_node("Label")
 		var text = String(" ") if value == 0 else String(value)
 		label.text = text
+		current_step += 1
 		yield(get_tree().create_timer(0.001), "timeout")
-	
 
+	
 func create_board():
 	for n in container.get_children():
 		container.remove_child(n)
@@ -112,8 +107,7 @@ func create_board():
 			rows[row][v - 1] = true
 			cols[column][v - 1] = true
 			cells[cell][v - 1] = true
-				
-				
+					
 func solve(board: Array, currentIndex: int, rowValues: Array, columnValues: Array, cellValues: Array) -> bool:
 	if currentIndex == 9 * 9:
 		return true
@@ -172,6 +166,12 @@ func get_column(index: int) -> int:
 
 func get_cell(index: int) -> int:
 	return (get_row(index) / 3) * 3  + get_column(index) / 3;
+	
+func are_all_true(arr: Array) -> bool:
+	for i in arr.size():
+		if arr[i] == false:
+			return false
+	return true
 	
 func print_board():
 	var strr = ""
