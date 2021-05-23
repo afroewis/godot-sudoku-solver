@@ -2,11 +2,13 @@ extends Control
 
 export(PackedScene) var rect_scene = preload("res://number.tscn")
 
-onready var button = get_node("Button")
-onready var container = get_node("GridContainer")
+onready var play_button = get_node("play_button")
+onready var pause_button = get_node("pause_button")
+onready var reset_button = get_node("reset_button")
+onready var container = get_node("numbers_container")
 
 # Game state
-var board = [
+var new_board = [
 	0, 0, 0, 0, 1, 0, 0, 0, 2,
 	0, 0, 0, 0, 0, 3, 0, 1, 0,
 	0, 0, 4, 0, 0, 5, 0, 0, 6,
@@ -18,10 +20,13 @@ var board = [
 	7, 0, 0, 0, 4, 0, 0, 0, 0
 ]
 
+var board = [] + new_board
+
 var rows: Array = []
 var cols: Array = []
 var cells: Array = []
 var steps: Array = []
+var isPaused: bool
 
 func are_all_true(arr: Array) -> bool:
 	for i in arr.size():
@@ -30,24 +35,57 @@ func are_all_true(arr: Array) -> bool:
 	return true
 
 func _ready():
-	button.connect("button_down", self, "solve_pressed")
+	play_button.connect("button_up", self, "solve_pressed")
+	pause_button.connect("button_up", self, "pause_pressed")
+	reset_button.connect("button_up", self, "reset_pressed")
+	
 	create_board()
 
+func pause_pressed():
+	play_button.disabled = false
+	pause_button.disabled = true
+	reset_button.disabled = false
+	isPaused = true
+	
+func reset_pressed():
+	play_button.disabled = false
+	pause_button.disabled = true
+	reset_button.disabled = true
+	board = [] + new_board;
+	steps = []
+	rows = []
+	cols = []
+	cells = []
+	isPaused = false		
+	create_board()
+	
+	
 func solve_pressed():
+	isPaused = false
+	play_button.disabled = true
+	pause_button.disabled = false
+	reset_button.disabled = false
+	
 	print_board()
 	solve(board, 0, rows, cols, cells)
 	print_board()
 	
-	for i in steps:
-		var index = i[0]
-		var value = i[1]
+	for step in steps:
+		if (isPaused):
+			break
+		var index = step[0]
+		var value = step[1]
 		var number = container.get_children()[index]
 		var label: Label = number.get_node("Label")
 		var text = String(" ") if value == 0 else String(value)
 		label.text = text
 		yield(get_tree().create_timer(0.001), "timeout")
 	
-func create_board():	
+
+func create_board():
+	for n in container.get_children():
+		container.remove_child(n)
+		
 	for x in board:
 		var instance = rect_scene.instance()
 		var label = instance.get_node("Label")

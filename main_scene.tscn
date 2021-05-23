@@ -37,29 +37,31 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Button" type="Button" parent="."]
+[node name="play_button" type="Button" parent="."]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -120.0
-margin_top = -36.0
-margin_right = 120.0
-text = "Solve"
+margin_left = -40.0
+margin_top = -44.0
+margin_right = 40.0
+margin_bottom = -8.0
+rect_pivot_offset = Vector2( -608, -400 )
+text = "Play"
 script = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="."]
+[node name="numbers_container" type="GridContainer" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -300.0
+margin_left = -296.0
 margin_top = -286.0
-margin_right = 300.0
-margin_bottom = 298.0
+margin_right = 304.0
+margin_bottom = 290.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 2
@@ -70,7 +72,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="."]
+[node name="title_label" type="Label" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -96.0
@@ -80,4 +82,56 @@ margin_bottom = 52.0
 custom_fonts/font = SubResource( 3 )
 text = "Sudoku Solver"
 
-[connection signal="toggled" from="Button" to="Button" method="_on_Button_toggled"]
+[node name="speed_slider" type="HSlider" parent="."]
+margin_left = 48.0
+margin_top = 672.0
+margin_right = 216.0
+margin_bottom = 688.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="speed_label" type="Label" parent="."]
+margin_left = 104.0
+margin_top = 656.0
+margin_right = 144.0
+margin_bottom = 670.0
+text = "Speed"
+
+[node name="pause_button" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 56.0
+margin_top = -44.0
+margin_right = 136.0
+margin_bottom = -8.0
+rect_pivot_offset = Vector2( 56, 32 )
+disabled = true
+text = "Pause"
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="reset_button" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 152.0
+margin_top = -44.0
+margin_right = 232.0
+margin_bottom = -8.0
+rect_pivot_offset = Vector2( 56, 32 )
+disabled = true
+text = "Restart"
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="toggled" from="play_button" to="play_button" method="_on_Button_toggled"]
+[connection signal="toggled" from="pause_button" to="pause_button" method="_on_Button_toggled"]
+[connection signal="toggled" from="reset_button" to="reset_button" method="_on_Button_toggled"]
