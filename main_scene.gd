@@ -6,6 +6,8 @@ onready var play_button = get_node("play_button")
 onready var pause_button = get_node("pause_button")
 onready var reset_button = get_node("reset_button")
 onready var container = get_node("numbers_container")
+onready var speed_slider = get_node("speed_slider")
+onready var steps_label = get_node("steps_label")
 
 # Game state
 var new_board = [
@@ -26,25 +28,33 @@ var rows: Array = []
 var cols: Array = []
 var cells: Array = []
 var steps: Array = []
-var isPaused: bool
+var is_paused: bool
 var current_step: int = 0
+var speed: int = 0
+var is_finished: bool = false
 
 func _ready():
 	play_button.connect("button_up", self, "solve_pressed")
 	pause_button.connect("button_up", self, "pause_pressed")
 	reset_button.connect("button_up", self, "reset_pressed")
+	speed_slider.connect("value_changed", self, "speed_slider_value_changed")
+	speed = 1 / speed_slider.value
 	
 	create_board()
 	
 	print_board()
 	solve(board, 0, rows, cols, cells)
+	update_steps(0, steps.size())
 	print_board()
+	
+func speed_slider_value_changed(value: int) -> void:
+	speed = 1 / value
 
 func pause_pressed():
 	play_button.disabled = false
 	pause_button.disabled = true
 	reset_button.disabled = false
-	isPaused = true
+	is_paused = true
 	
 func reset_pressed():
 	play_button.disabled = false
@@ -55,18 +65,24 @@ func reset_pressed():
 	rows = []
 	cols = []
 	cells = []
-	isPaused = false	
+	is_paused = false
+	is_finished = false
 	current_step = 0	
 	create_board()
 	solve(board, 0, rows, cols, cells)
+	update_steps(0, steps.size())
 	
 func solve_pressed():
-	isPaused = false
+	is_paused = false
 	play_button.disabled = true
 	pause_button.disabled = false
 	reset_button.disabled = false
 	
-	while !isPaused:
+	while !is_paused && !is_finished:
+		if current_step == steps.size():
+			is_finished = true
+			break
+			
 		var index = steps[current_step][0]
 		var value = steps[current_step][1]
 		var number = container.get_children()[index]
@@ -74,7 +90,10 @@ func solve_pressed():
 		var text = String(" ") if value == 0 else String(value)
 		label.text = text
 		current_step += 1
-		yield(get_tree().create_timer(0.001), "timeout")
+		
+		update_steps(current_step, steps.size())
+		
+		yield(get_tree().create_timer(speed), "timeout")
 
 	
 func create_board():
@@ -173,7 +192,10 @@ func are_all_true(arr: Array) -> bool:
 			return false
 	return true
 	
-func print_board():
+func update_steps(executed: int, total: int) -> void:
+	steps_label.text = str("Steps: ", executed, "/", total)
+	
+func print_board() -> void:
 	var strr = ""
 	
 	for i in 81:
